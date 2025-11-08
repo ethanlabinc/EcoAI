@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>EcoAI</title>
+<meta name="description" content="EcoAI" />
+<style>
+  :root{
+    --bg:#f6f7f9;
+    --paper:#ffffff;
+    --ink:#0a0a0a;
+    --muted:#6c6f75;
+    --line:#e8e8ec;
+    --accent:#3bff79;          
+    --accent-ink:#151515;
+    --radius:18px;
+    --shadow:0 12px 36px rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body {
+  margin: 0;
+  font-family: Inter, system-ui, Arial;
+  background: linear-gradient(45deg, #60a5fa, #a78bfa, #f472b6, #22d3ee);
+  background-size: 400% 400%;
+  animation: auroraMove 15s ease infinite;
+}
+
+@keyframes auroraMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+  a{color:inherit; text-decoration:none}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 22px}
+  .rounded{border-radius:var(--radius)}
+  .paper{background:var(--paper); border:1px solid var(--line); box-shadow:var(--shadow)}
+  .btn{
+    display:inline-flex; align-items:center; gap:10px;
+    background:var(--accent); color:#fff; padding:12px 18px;
+    border:none; border-radius:14px; font-weight:800; letter-spacing:.2px;
+    cursor:pointer; transition:transform .12s ease, opacity .2s ease;
+  }
+  .btn:hover{ transform:translateY(-1px) }
+  .btn-ghost{ background:#fff; color:var(--accent-ink); border:1px solid var(--line) }
+  .chip{display:inline-block; padding:4px 10px; border:1px solid var(--line); border-radius:999px; font-size:12px; color:#111}
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,.75); backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{height:68px; display:flex; align-items:center; justify-content:space-between}
+  .brand{display:flex; align-items:center; gap:12px}
+  .logo{
+    width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
+    background: conic-gradient(from 210deg, #ffd2cb, var(--accent), #ff8e81, #ffd2cb);
+    box-shadow:0 10px 24px rgba(255,77,59,.35);
+  }
+  .logotype{font-size:28px; font-weight:900; letter-spacing:.2px}
+  .dot{color:var(--accent)}
+  .nav-links{display:flex; gap:20px; align-items:center}
+  .nav-links a{font-weight:700; color:#1a1a1a; opacity:.8}
+  .nav-links a.active{opacity:1}
+  /* ===== SCREENS (router) ===== */
+  .screen{display:none}
+  .screen.active{display:block}
+  /* ===== HERO (template-inspired) ===== */
+  .hero{
+    position:relative; overflow:hidden;
+    padding:64px 0 30px;
+    background:
+      radial-gradient(700px 300px at 85% -10%, #ffeae7 0%, transparent 60%),
+      radial-gradient(600px 280px at -10% 20%, #f7f9ff 0%, transparent 60%);
+  }
+  .hero-grid{
+    display:grid; grid-template-columns: 1.1fr .9fr; gap:24px; align-items:center;
+  }
+  @media (max-width:980px){ .hero-grid{grid-template-columns:1fr} }
+  .left-mark{
+    font-size: clamp(42px, 10vw, 110px);
+    font-weight: 900; line-height:.9; letter-spacing:-2px;
+  }
+  .accent-bar{
+    height: 160px; background:var(--accent); border-radius:16px;
+    box-shadow:0 14px 40px rgba(255,77,59,.35);
+  }
+  .hero-card{ padding:18px; }
+  .kpis{display:grid; grid-template-columns:repeat(3,1fr); gap:12px}
+  .kpi{border:1px solid var(--line); border-radius:14px; padding:12px 14px; background:#fff}
+  .kpi .val{font-weight:900; font-size:24px}
+  .muted{color:var(--muted)}
+  /* ===== CONTENT SECTIONS ===== */
+  section{padding:28px 0}
+  .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  @media (max-width:900px){ .grid-3{grid-template-columns:1fr} }
+  .card{padding:18px}
+  .card h3{margin:0 0 6px}
+  /* ===== SIMULATOR (styled to match) ===== */
+  .sim-grid{display:grid; grid-template-columns:1.2fr .8fr; gap:18px}
+  @media (max-width:980px){ .sim-grid{grid-template-columns:1fr} }
+  #map{
+    position:relative; height:430px; overflow:hidden;
+    background:linear-gradient(180deg,#f2f5ff,#fafcff); border-radius:16px; border:1px solid var(--line);
+  }
+  .road{
+    position:absolute; inset:0; margin:auto; width:90%; height:72%;
+    border-radius:16px; background:#eceff6; box-shadow:inset 0 2px 10px rgba(0,0,0,.04);
+  }
+  .bin{
+    width:74px; height:104px; border-radius:14px; position:absolute;
+    display:flex; align-items:flex-end; justify-content:center;
+    background:#eef1ff; border:1px solid #e3e6f6;
+    box-shadow:0 10px 20px rgba(30,40,80,.08);
+    transition:background .25s ease, transform .15s ease;
+  }
+  .bin:hover{ transform: translateY(-2px); }
+  .fill{width:82%; height:8px; border-radius:10px; margin-bottom:8px; background:linear-gradient(180deg,#ff8a7d,var(--accent)); transition:height .35s ease}
+  .label{position:absolute; top:6px; font-size:11px; color:var(--muted); font-weight:700}
+  .robot{
+    width:48px;height:48px;border-radius:14px; position:absolute; display:flex; align-items:center; justify-content:center;
+    background:#fff; border:2px solid #ffe0dc; box-shadow:0 12px 28px rgba(200,60,40,.25)
+  }
+  .robot:after{content:"🤖"; font-size:20px}
+  .row{display:flex; align-items:center; justify-content:space-between; gap:10px; border:1px solid var(--line); padding:10px 12px; border-radius:14px; background:#fff}
+  .badge{font-size:12px; color:#111; border:1px solid var(--line); padding:3px 8px; border-radius:999px}
+  .score{font-weight:900}
+  footer{padding:30px 0; color:var(--muted); text-align:center}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <div class="brand">
+      <div class="logo rounded" aria-hidden="true">
+        <img src="/images/logo.png" alt="EcoAI Logo" style="width:100%; height:100%; object-fit:cover; border-radius:12px;">
+        </div>
+
+      <div class="logotype">EcoAI<span class="dot">.</span></div>
+    </div>
+    <div class="nav-links">
+      <a href="#" data-link="home" class="active">Home</a>
+      <a href="#" data-link="sim">Simulation</a>
+      <a href="#" data-link="about">About</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HOME -->
+<main id="home" class="screen active">
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <!-- Left: typographic hero ala template -->
+      <div>
+        <div class="left-mark">Eco<br/>AI<span class="dot">.</span></div>
+        <p class="muted" style="max-width:46ch; margin-top:6px">
+          A minimal, exhibition-ready experience that demonstrates how AI and robotics can transform
+          everyday city services. Our first prototype focuses on <b>smart waste collection</b>—predicting
+          overflows and dispatching a robot before streets get messy. Bold, clear, and hands-on.
+        </p>
+        <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px">
+          <button class="btn" data-link="sim">Try Simulation →</button>
+          <a class="btn btn-ghost" data-link="about">Learn more</a>
+        </div>
+      </div>
+
+      <!-- Right: image block with accent bar (template-inspired) -->
+      <div class="paper rounded hero-card">
+        <div class="chip">Prototype · v1</div>
+        <div style="display:grid; grid-template-rows:auto 1fr; gap:14px; margin-top:12px">
+          <div class="accent-bar rounded" aria-hidden="true"></div>
+          <div class="kpis">
+            <div class="kpi rounded">
+              <div class="val" id="kpiClean">99%</div>
+              <div class="muted">Cleanliness</div>
+            </div>
+            <div class="kpi rounded">
+              <div class="val" id="kpiBins">4</div>
+              <div class="muted">Smart Bins</div>
+            </div>
+            <div class="kpi rounded">
+              <div class="val" id="kpiSavings">18%</div>
+              <div class="muted">Ops Savings</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Long, inspirational paragraph (as requested) -->
+  <section>
+    <div class="wrap paper rounded card">
+      <div class="chip">Vision</div>
+      <h2 style="margin:10px 0 6px 0">How AI + Robotics Change the City</h2>
+      <p class="muted" style="font-size:16px; line-height:1.65; max-width:95ch">
+        Imagine a city that senses itself—a living system where bins, buses, lights, and parks quietly
+        report their status in real time. With a small layer of intelligence, patterns emerge: rush-hour
+        surges, festival spikes, recycling hotspots, and quiet nights that don’t need full power. Instead
+        of fixed schedules, services adapt dynamically. Our demo shows one piece of that puzzle:
+        <b>predictive waste collection</b>. A simple model estimates when each bin will reach capacity;
+        a robot is dispatched before overflow occurs. Scaled city-wide, this cuts emergency pickups,
+        reduces fuel use, and keeps streets healthier. The same pattern applies everywhere—traffic
+        signals learning from live flow, irrigation guided by soil sensors, energy use balanced
+        across neighborhoods, safety drones patrolling only when needed. The result isn’t just “smart”;
+        it’s <i>sympathetic</i>—public services that respond to people, protect budgets, and shrink emissions,
+        while making urban life calmer, cleaner, and more human.
+      </p>
+    </div>
+  </section>
+
+  <!-- Option cards -->
+  <section>
+    <div class="wrap grid-3">
+      <div class="paper rounded card">
+        <h3>Predictive Collection</h3>
+        <p class="muted">Estimate time-to-overflow per bin and intervene exactly when needed.</p>
+      </div>
+      <div class="paper rounded card">
+        <h3>Robotic Dispatch</h3>
+        <p class="muted">Autonomous cart or drone performs pickup, reports completion, and reschedules itself.</p>
+      </div>
+      <div class="paper rounded card">
+        <h3>Citywide Impact</h3>
+        <p class="muted">Fewer emergency calls, lower emissions, budget savings, and cleaner streets.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="sim" class="screen">
+  <section>
+    <div class="wrap">
+      <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin:16px 0">
+        <h2 style="margin:0">Smart Waste Simulation</h2>
+        <a class="btn-ghost btn" data-link="home">← Back Home</a>
+      </div>
+
+      <div class="sim-grid">
+        
+        <div class="paper rounded card">
+          <div id="map" class="rounded">
+            <div class="road"></div>
+            <div id="robot" class="robot" style="left:12%; top:20%; display:none"></div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:12px">
+            <div class="muted">Speed: <b id="speedLabel">1x</b></div>
+            <div>Cleanliness Score: <span class="score" id="cleanScore">100</span>%</div>
+          </div>
+
+          <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:10px">
+            <button class="btn" id="startBtn">Start</button>
+            <button class="btn btn-ghost" id="pauseBtn">Pause</button>
+            <button class="btn btn-ghost" id="collectAll">Collect All</button>
+            <input id="speedRange" class="rounded" type="range" min="0.25" max="3" step="0.25" value="1" style="width:160px">
+          </div>
+        </div>
+
+        
+        <div class="paper rounded card">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <h3 style="margin:0">AI Dashboard</h3>
+            <span class="badge" id="lastUpdate">idle</span>
+          </div>
+          <p class="muted" id="aiSuggestion" style="margin-top:6px">Press <b>Start</b> to begin predictions.</p>
+
+          <h4 style="margin:14px 0 8px">Bins</h4>
+          <div id="binsList" style="display:flex; flex-direction:column; gap:10px"></div>
+
+          <div class="paper rounded card" style="margin-top:12px">
+            <div class="chip">Model</div>
+            <p class="muted" style="margin-top:8px">
+              <b>Time-to-overflow</b> ≈ (100 − currentFill) / fillRate. When a bin is predicted to overflow
+              soon, the robot is dispatched. Real deployments use camera or ultrasonic sensors, route
+              optimization, and feedback from every pickup to keep improving.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main id="about" class="screen">
+  <section>
+    <div class="wrap">
+      <h2 style="margin:16px 0">About CityLab</h2>
+      <div class="grid-3">
+        <div class="paper rounded card">
+          <div class="chip">Sensors</div>
+          <p class="muted" style="margin-top:8px">Fill-level sensors, cameras, and GPS let the city observe itself continuously.</p>
+        </div>
+        <div class="paper rounded card">
+          <div class="chip">AI</div>
+          <p class="muted" style="margin-top:8px">Learning patterns from live data to predict needs and prevent issues.</p>
+        </div>
+        <div class="paper rounded card">
+          <div class="chip">Robots</div>
+          <p class="muted" style="margin-top:8px">From carts to drones, tasks are automated with safety and efficiency.</p>
+        </div>
+      </div>
+      <div style="margin-top:18px; display:flex; gap:10px">
+        <button class="btn" data-link="sim">Try Simulation →</button>
+        <a class="btn btn-ghost" data-link="home">Back Home</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  EcoAI- made by Aaryan and Ethan for AI explorica.
+</footer>
+
+<script>
+
+const screens = { home:document.getElementById('home'), sim:document.getElementById('sim'), about:document.getElementById('about') };
+document.querySelectorAll('[data-link]').forEach(a=>{
+  a.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const to = a.getAttribute('data-link');
+    if(!screens[to]) return;
+    Object.values(screens).forEach(s=>s.classList.remove('active'));
+    screens[to].classList.add('active');
+    document.querySelectorAll('.nav-links a').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll(`.nav-links a[data-link="${to}"]`).forEach(x=>x.classList.add('active'));
+    if(to==='home') bumpKPIs();
+  });
+});
+function bumpKPIs(){
+  ['kpiClean','kpiBins','kpiSavings'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(!el) return; el.style.transition='transform .25s'; el.style.transform='scale(1.06)';
+    setTimeout(()=>{ el.style.transform='scale(1)'; }, 220);
+  });
+}
+
+(function animateKPIs(){
+  const clean = document.getElementById('kpiClean');
+  const savings = document.getElementById('kpiSavings');
+  if(!clean || !savings) return;
+  let c=99, s=18, dir=-1;
+  setInterval(()=>{
+    c += dir; s += dir;
+    if (c<=96 || c>=99) dir*=-1;
+    clean.textContent=c+'%'; savings.textContent=s+'%';
+  }, 1800);
+})();
+
+const BINS = [
+  {id:'A', x:20, y:28},
+  {id:'B', x:60, y:20},
+  {id:'C', x:76, y:58},
+  {id:'D', x:40, y:68},
+];
+
+let bins = [];
+let running = false;
+let speed = 1;
+let loop = null;
+let robotBusy = false;
+
+const robot = document.getElementById('robot');
+const aiSuggestion = document.getElementById('aiSuggestion');
+const binsList = document.getElementById('binsList');
+const cleanScore = document.getElementById('cleanScore');
+const lastUpdate = document.getElementById('lastUpdate');
+const map = document.getElementById('map');
+
+function initSim(){
+  BINS.forEach(b=>{
+    const el=document.createElement('div');
+    el.className='bin';
+    el.style.left=b.x+'%'; el.style.top=b.y+'%';
+    el.innerHTML=`<div class="label">Zone ${b.id}</div><div class="fill"></div>`;
+    map.appendChild(el);
+    bins.push({ id:b.id, el, fillEl:el.querySelector('.fill'), fill:Math.floor(Math.random()*25), rate:+(0.6+Math.random()*1.4).toFixed(2) });
+  });
+  renderList(); updateUI();
+}
+function renderList(){
+  binsList.innerHTML='';
+  bins.forEach(b=>{
+    const row=document.createElement('div');
+    row.className='row';
+    row.innerHTML=`
+      <div style="display:flex;align-items:center;gap:10px">
+        <strong>Zone ${b.id}</strong>
+        <span class="badge">rate ${b.rate}/s</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span>${Math.round(b.fill)}%</span>
+        <button class="btn btn-ghost" data-collect="${b.id}">Collect</button>
+      </div>`;
+    binsList.appendChild(row);
+  });
+  document.querySelectorAll('[data-collect]').forEach(btn=>{
+    btn.onclick=()=> dispatchCollect(btn.getAttribute('data-collect'));
+  });
+}
+function updateUI(){
+  bins.forEach(b=>{
+    const h=Math.max(8, Math.min(84, b.fill/100*84 + 8));
+    b.fillEl.style.height=h+'px';
+    b.el.style.background = b.fill>=85 ? '#ffe9e6' : '#eef1ff';
+  });
+  const avg=bins.reduce((s,b)=>s+b.fill,0)/bins.length;
+  cleanScore.textContent=Math.max(0, Math.round(100-avg));
+}
+function predict(){
+  const now=new Date(); lastUpdate.textContent=now.toLocaleTimeString();
+  const preds=bins.map(b=>({id:b.id, secs:b.rate>0?(100-b.fill)/b.rate:Infinity, fill:b.fill})).sort((a,b)=>a.secs-b.secs);
+  const next=preds[0];
+  if(!next || !isFinite(next.secs)){ aiSuggestion.textContent='No prediction available.'; return; }
+  const s=Math.max(0, Math.round(next.secs));
+  aiSuggestion.innerHTML=`Next critical: <b>Zone ${next.id}</b> in ~${s}s (now ${Math.round(next.fill)}%).`;
+  if(s<=8 && !robotBusy) dispatchCollect(next.id);
+}
+function tick(){
+  bins.forEach(b=> b.fill=Math.min(100, b.fill + b.rate*speed) );
+  updateUI(); predict();
+}
+function dispatchCollect(id){
+  if(robotBusy) return;
+  const target=bins.find(b=>b.id===id);
+  if(!target) return;
+  robotBusy=true;
+  robot.style.display='flex';
+  robot.style.transition='left 1s linear, top 1s linear';
+  setTimeout(()=>{ robot.style.left=target.el.style.left; robot.style.top=target.el.style.top; }, 10);
+  setTimeout(()=>{ target.fill=0; updateUI(); }, 1150);
+  setTimeout(()=>{ robot.style.left='12%'; robot.style.top='20%'; }, 1850);
+  setTimeout(()=>{ robot.style.display='none'; robotBusy=false; renderList(); }, 2600);
+}
+
+document.getElementById('startBtn').onclick=()=>{ if(running) return; running=true; loop=setInterval(tick,650); };
+document.getElementById('pauseBtn').onclick=()=>{ running=false; clearInterval(loop); };
+document.getElementById('collectAll').onclick=()=>{
+  let i=0; const order=[...bins].sort((a,b)=>b.fill-a.fill);
+  const timer=setInterval(()=>{ if(i>=order.length){clearInterval(timer);return;} if(!robotBusy){dispatchCollect(order[i].id); i++;} }, 700);
+};
+document.getElementById('speedRange').oninput=e=>{ speed=+e.target.value; document.getElementById('speedLabel').textContent=speed+'x'; };
+
+initSim();
+</script>
+</body>
+</html>
